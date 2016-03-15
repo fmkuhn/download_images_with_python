@@ -153,7 +153,7 @@ def main(argv):
     if not disable_linecount:
         number_of_urls = get_number_of_urls(input_filename)
         if not number_of_urls:
-            print input_filename, 'does not contain valid lines (lines with a starting \'#\' are ignored)'
+            print(input_filename, 'does not contain valid lines (lines with a starting \'#\' are ignored)')
             sys.exit(2)
     download_images(inputfile, reload_all, error_filename, number_of_urls)
 
