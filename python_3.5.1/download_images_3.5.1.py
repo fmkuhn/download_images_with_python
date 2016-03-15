@@ -48,7 +48,7 @@ def download(url, error_file, reload_all):
                 log_error(error_file, local_image_path, 'Could not write image to disk : ' + sys.exc_info()[0])
                 return 1
         print ('...successfully saved to \'' + local_image_path + '\'')
-    except urllib2.URLError as error: #an error occurred while trying to reach url
+    except urllib.URLError as error: #an error occurred while trying to reach url
         log_error(error_file, local_image_path, str(error))
         return 1
     except KeyboardInterrupt: #catch keyboard interrupt, since all other errors are passed below
