@@ -146,7 +146,7 @@ def main(argv):
             reload_all = True
         elif opt in ('-d', '--disable-linecount'):
             disable_linecount = True
-    if not inputfile: #-i [--imagefile] is mandatory
+    if not input_filename: #-i [--imagefile] is mandatory
         print('Missing option -i')
         print_usage(sys.argv[0])
         sys.exit(2)
