@@ -123,7 +123,7 @@ def get_number_of_urls(inputfilename):
 ## Main function when download_images is called as a script, i.e., './download_images.py ...'
 # @param argv command line parameter list
 def main(argv):
-    inputfile = '' #see download_images doc
+    input_filename = '' #see download_images doc
     error_filename = 'errors.log' #see download_images doc
     reload_all = False #see download_images doc
     disable_linecount = False #If true, the number of lines in inputfile are not read
@@ -139,7 +139,7 @@ def main(argv):
             print_usage(sys.argv[0])
             sys.exit() #exit without error
         elif opt in ('-i', '--inputfile'): #inputfile filename found
-            inputfile = arg
+            input_filename = arg
         elif opt in ('-e', '--errorfile'): #errorfile filename found
             error_filename = arg
         elif opt in ('-r', '--reload'):
@@ -155,7 +155,7 @@ def main(argv):
         if not number_of_urls:
             print(input_filename, 'does not contain valid lines (lines with a starting \'#\' are ignored)')
             sys.exit(2)
-    download_images(inputfile, reload_all, error_filename, number_of_urls)
+    download_images(input_filename, reload_all, error_filename, number_of_urls)
 
 ## Printing script usage to the console
 # @param script_name Name of this script from command line parameters
