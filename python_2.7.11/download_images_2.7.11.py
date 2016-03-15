@@ -5,21 +5,29 @@ import urllib2 #for image downloading
 import os #operating system stuff, like path
 import sys #Unexpected errors
 
-## This downloads a list of images (given as a list of URLs in a file).
+## This downloads a list of images (given as a list of URLs in a file). The file may contain empty lines and lines starting with a '#', i.e., comments.
 #
 # It saves each of them in a directory (according to the server's structure the images was on) below the directory this script is run in,
 # e.g., 'http://www.foo.de/bar/xyz.jpg' would be saved in './www.foo.de/bar/xyz.jpg'.
-# TODO For large lists of files, it would be useful to show progress, e.g., 'Image 1 out of xxxx...'
 # @param inputfile A file containing a list of URLs, one in each line.
-# @param reload_all True = Reload all images, even if they already exist (Default: False).
+# @param reload_all True = (optional) Reload all images, even if they already exist (Default: False).
 # @param error_filename (optional) A file for logging potential error messages (Default: 'errors.log').
-def download_images(inputfile, reload_all = False, error_filename = 'errors.log'):
+# @param number_of_urls (optional) The number of URLs to be downloaded. If this is 0, it was not counted and is therefore not printed in the output
+def download_images(inputfile, reload_all = False, error_filename = 'errors.log', number_of_urls = 0):
     try:
         with open(inputfile, 'r') as url_list, open(error_filename, 'w') as error_file: #open images_filename for reading url_list and error_file for logging errors, 'with' makes sure the files get closed no matter what
             error_count = 0
+            url_count = 1
             for url in url_list:
-                if not url: continue #ignore empty lines
+                url = url.rstrip() #remove line end as well as spaces from end of url
+                if not url or url.startswith('#'):
+                    continue #ignore empty lines and lines beginning with a '#'
+                if number_of_urls: #number of urls known --> print as part of output
+                    print url_count, '/', number_of_urls, ':', url, '...'
+                else:
+                    print url_count, ':', url, '...'
                 error_count += download(url, error_file, reload_all)
+                url_count += 1
                 print '' #Better readable output
 
             print 'Finished downloading images.'
@@ -28,6 +36,9 @@ def download_images(inputfile, reload_all = False, error_filename = 'errors.log'
     except IOError as error:
         print str(error)
         raise
+    except: #catch all other exceptions
+        print 'Unexpected error - ' + str(sys.exc_info()[0])
+        raise
 
 ## Downloads a single image to the disk.
 # @param url The URL where the image is located.
@@ -35,8 +46,6 @@ def download_images(inputfile, reload_all = False, error_filename = 'errors.log'
 # @param reload_all True = Reload all images, even if they already exist.
 # @return integer - 1 if an error occurred (thus increasing error_count), 0 otherwise.
 def download(url, error_file, reload_all):
-    url = url.rstrip() #remove line end from end of url
-    print url, '...'
     local_image_path = url.split('//')[-1] #ignore everything before //, e.g. http:, the rest is the local image path, where each item between two '/' is a subdirectory and the last item is the filename
     if not reload_all and os.path.exists(local_image_path):
         print '...is already present at \'' + local_image_path + '\' - Continuing with next url'
@@ -91,14 +100,35 @@ def log_error(error_file, error_causer, error_string):
     print error_string
     error_file.write(error_causer + ' -- ' + error_string + '\n\n') # add new lines for better readability
 
+## Counts number of lines in the file, which are not empty and don't start with a '#'
+# @param inputfilename Name of the file.
+# @return integer
+def get_number_of_urls(inputfilename):
+    try:
+        with open(inputfilename, 'r') as f:
+            line_counter = 0
+            for line in f:
+                if not line.strip() or line.startswith('#'):
+                    continue
+                line_counter += 1
+            return line_counter
+    except IOError as error:
+        print str(error)
+        raise
+    except: #catch all other exceptions
+        print 'Unexpected error - ' + str(sys.exc_info()[0])
+        raise
+
 ## Main function when download_images is called as a script, i.e., './download_images.py ...'
 # @param argv command line parameter list
 def main(argv):
-    inputfile = '' #see download_images doc
+    input_filename = '' #see download_images doc
     error_filename = 'errors.log' #see download_images doc
     reload_all = False #see download_images doc
+    disable_linecount = False #If true, the number of lines in inputfile are not read
+    number_of_urls = 0 #number of urls
     try:
-        opts, args = getopt.getopt(argv,'hi:e:r',['help','inputfile=','errorfile=','reload']) #get options and arguments
+        opts, args = getopt.getopt(argv,'hi:e:rd',['help','inputfile=','errorfile=','reload','disable-linecount']) #get options and arguments
     except getopt.GetoptError as error: #unknown parameter or missing argument for parameter
         print str(error)
         print_usage(argv[0])
@@ -108,27 +138,36 @@ def main(argv):
             print_usage(sys.argv[0])
             sys.exit() #exit without error
         elif opt in ('-i', '--inputfile'): #inputfile filename found
-            inputfile = arg
+            input_filename = arg
         elif opt in ('-e', '--errorfile'): #errorfile filename found
             error_filename = arg
         elif opt in ('-r', '--reload'):
             reload_all = True
-    if not inputfile: #-i [--imagefile] is mandatory
+        elif opt in ('-d', '--disable-linecount'):
+            disable_linecount = True
+
+    if not input_filename: #-i [--inputfile] is mandatory
         print 'Missing option -i'
         print_usage(sys.argv[0])
         sys.exit(2)
-    download_images(inputfile, reload_all, error_filename)
+    if not disable_linecount:
+        number_of_urls = get_number_of_urls(input_filename)
+        if not number_of_urls:
+            print input_filename, 'does not contain valid lines (lines with a starting \'#\' are ignored)'
+            sys.exit(2)
+    download_images(input_filename, reload_all, error_filename, number_of_urls)
 
 ## Printing script usage to the console
 # @param script_name Name of this script from command line parameters
 def print_usage(script_name):
-    print 'Usage: ', script_name.split('/')[-1], '-i <imagefile> [-e <errorfile> -r]' #show only filename, not path, on usage
+    print 'Usage: ', script_name.split('/')[-1], '-i <imagefile> [-e <errorfile> -r -c]' #show only filename, not path, on usage
     print ''
     print 'Options:'
     print '  -h, --help                      Show this help'
     print '  -i, --imagefile <filename>      File containing image URLs'
     print '  -e, --errorfile <filename>      File for writing error log'
     print '  -r, --reload                    Reload all images'
+    print '  -d, --disable-linecount         Do not count number of urls in inputfile'
 
 # Checks if download_images.py is run from the command line or if it is used
 if __name__ == '__main__':

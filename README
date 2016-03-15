@@ -1,4 +1,5 @@
 This downloads a list of images (given as a list of URLs in a file).
+The file may contain empty lines and lines starting with a '#', i.e., comments.
 
 It saves each of them in a directory (according to the server's structure 
 the images was on) below the directory this script is run in, e.g., 
