@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import getopt #get command line parameters
 import urllib2 #for image downloading
@@ -6,6 +6,7 @@ import os #operating system stuff, like path
 import sys #Unexpected errors
 
 ## This downloads a list of images (given as a list of URLs in a file), saving each of them in a directory according to the server structure it was on below the directory this script is run in.
+# TODO For large lists of files, it would be useful to show progress, e.g., 'Image 1 out of xxxx...'
 # @param inputfile A file containing a list of URLs, one in each line.
 # @param reload_all Reload all images, even if they already exist (Default: False)
 # @param error_filename (optional) A file for logging potential error messages (Default: 'errors.log').
@@ -86,17 +87,6 @@ def log_error(error_file, local_image_filename, error_string):
     print error_string
     error_file.write(local_image_filename + ' -- ' + error_string + '\n\n') # add new lines for better readability
 
-## Printing script usage to the console
-# @param script_name Name of this script from command line parameters
-def print_usage(script_name):
-    print script_name, '-i <imagefile> [-e <errorfile> -r]'
-    print ''
-    print 'Options:'
-    print '  -h, --help                      Show this help'
-    print '  -i, --imagefile <filename>      File containing image URLs'
-    print '  -e, --errorfile <filename>      File for writing error log'
-    print '  -r, --reload                    Reload all images'
-
 ## Main function when download_images is called as a script, i.e., './download_images.py ...'
 # @param argv command line parameter list
 def main(argv):
@@ -123,8 +113,19 @@ def main(argv):
         print 'Missing option -i'
         print_usage(sys.argv[0])
         sys.exit(2)
-
     download_images(inputfile, reload_all, error_filename)
 
+## Printing script usage to the console
+# @param script_name Name of this script from command line parameters
+def print_usage(script_name):
+    print 'Usage: ', script_name.split('/')[-1], '-i <imagefile> [-e <errorfile> -r]' #show only filename, not path, on usage
+    print ''
+    print 'Options:'
+    print '  -h, --help                      Show this help'
+    print '  -i, --imagefile <filename>      File containing image URLs'
+    print '  -e, --errorfile <filename>      File for writing error log'
+    print '  -r, --reload                    Reload all images'
+
+# Checks if download_images.py is run from the command line or if it is used
 if __name__ == '__main__':
     main(sys.argv[1:])
