@@ -51,7 +51,7 @@ def download(url, error_file, reload_all):
     except urllib2.URLError as error: #an error occurred while trying to reach url
         log_error(error_file, local_image_path, str(error))
         return 1
-    except KeyboardInterrupt: #catch keyboard interrupt, since all other errors are passed below
+    except KeyboardInterrupt: #catch keyboard interrupt, since all other errors are only logged and not raised below
         raise
     except: #catch all other exceptions
         log_error(error_file, local_image_path, 'Unexpected error - ' + str(sys.exc_info()[0]))
