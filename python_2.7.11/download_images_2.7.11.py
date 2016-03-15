@@ -5,10 +5,13 @@ import urllib2 #for image downloading
 import os #operating system stuff, like path
 import sys #Unexpected errors
 
-## This downloads a list of images (given as a list of URLs in a file), saving each of them in a directory according to the server structure it was on below the directory this script is run in.
+## This downloads a list of images (given as a list of URLs in a file).
+#
+# It saves each of them in a directory (according to the server's structure the images was on) below the directory this script is run in, e.g., http://www.foo.de/bar/xyz.jpg
+# would be saved in './www.foo.de/bar/xyz.jpg'.
 # TODO For large lists of files, it would be useful to show progress, e.g., 'Image 1 out of xxxx...'
 # @param inputfile A file containing a list of URLs, one in each line.
-# @param reload_all Reload all images, even if they already exist (Default: False)
+# @param reload_all True = Reload all images, even if they already exist (Default: False).
 # @param error_filename (optional) A file for logging potential error messages (Default: 'errors.log').
 def download_images(inputfile, reload_all = False, error_filename = 'errors.log'):
     try:
@@ -29,8 +32,8 @@ def download_images(inputfile, reload_all = False, error_filename = 'errors.log'
 ## Downloads a single image to the disk.
 # @param url The URL where the image is located.
 # @param error_file The file errors are logged to.
-# @param reload_all Determines if 
-# @return integer - 1 if an error occurred (thus increasing error_count), 0 otherwise
+# @param reload_all True = Reload all images, even if they already exist.
+# @return integer - 1 if an error occurred (thus increasing error_count), 0 otherwise.
 def download(url, error_file, reload_all):
     url = url.rstrip() #remove line end from end of url
     print url, '...'
@@ -50,18 +53,18 @@ def download(url, error_file, reload_all):
                 return 1
         print '...successfully saved to \'' + local_image_path + '\''
     except urllib2.URLError as error: #an error occurred while trying to reach url
-        log_error(error_file, local_image_path, str(error))
+        log_error(error_file, url, str(error))
         return 1
     except KeyboardInterrupt: #catch keyboard interrupt, since all other errors are only logged and not raised below
         raise
     except: #catch all other exceptions
-        log_error(error_file, local_image_path, 'Unexpected error - ' + str(sys.exc_info()[0]))
+        log_error(error_file, url, 'Unexpected error - ' + str(sys.exc_info()[0]))
         return 1
     return 0
     
-## Creates missing subdirectories for local_image_path
-# @param local_image_path Local path to the image file including subdirectories
-# @return boolean - False if an error occurred, True otherwise
+## Creates missing subdirectories for local_image_path.
+# @param local_image_path Local path to the image file including subdirectories.
+# @return boolean - False if an error occurred, True otherwise.
 def create_subdirectories(local_image_path):
     current_directory = os.path.abspath('.') #save current path
     directory_list = local_image_path.split('/')[:-1] #ignore last item, i.e., the filename
@@ -82,10 +85,11 @@ def create_subdirectories(local_image_path):
 
 ## Logs error to error_file and console.
 # @param error_file File, where errors are logged to.
-# @param error_string String to log to error_file and console
-def log_error(error_file, local_image_filename, error_string):
+# @param error_causer Url or local filename for which the error occurred
+# @param error_string String to log to error_file and console.
+def log_error(error_file, error_causer, error_string):
     print error_string
-    error_file.write(local_image_filename + ' -- ' + error_string + '\n\n') # add new lines for better readability
+    error_file.write(error_causer + ' -- ' + error_string + '\n\n') # add new lines for better readability
 
 ## Main function when download_images is called as a script, i.e., './download_images.py ...'
 # @param argv command line parameter list
