@@ -164,7 +164,7 @@ def print_usage(script_name):
     print ''
     print 'Options:'
     print '  -h, --help                      Show this help'
-    print '  -i, --imagefile <filename>      File containing image URLs'
+    print '  -i, --inputfile <filename>      File containing image URLs'
     print '  -e, --errorfile <filename>      File for writing error log'
     print '  -r, --reload                    Reload all images'
     print '  -d, --disable-linecount         Do not count number of urls in inputfile'

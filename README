@@ -11,10 +11,10 @@ Default behavior:
 - The number of URLs in the inputfile is counted for easier visualization of the progress 
   (empty lines and lines starting with a '#' are ignored). (see option '-d')
  
-Usage: download_images_x.y.zz.py -i <imagefile> [-e <errorfile> -r -d]
+Usage: download_images_x.y.zz.py -i <inputfile> [-e <errorfile> -r -d]
 	Options:
 		-h, --help                      Show help
-		-i, --imagefile <filename>      File containing image URLs
+		-i, --inputfile <filename>      File containing image URLs
 		-e, --errorfile <filename>      File for writing error log
 		-r, --reload                    Reload all images
 		-d, --disable-linecount         Do not count number of urls in inputfile
