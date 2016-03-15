@@ -160,7 +160,7 @@ def main(argv):
 ## Printing script usage to the console
 # @param script_name Name of this script from command line parameters
 def print_usage(script_name):
-    print 'Usage: ', script_name.split('/')[-1], '-i <imagefile> [-e <errorfile> -r -d]' #show only filename, not path, on usage
+    print 'Usage: ', script_name.split('/')[-1], '-i <inputfile> [-e <errorfile> -r -d]' #show only filename, not path, on usage
     print ''
     print 'Options:'
     print '  -h, --help                      Show this help'
