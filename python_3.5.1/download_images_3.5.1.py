@@ -8,8 +8,8 @@ import sys #For unexpected errors
 
 ## This downloads a list of images (given as a list of URLs in a file).
 #
-# It saves each of them in a directory (according to the server's structure the images was on) below the directory this script is run in, e.g., http://www.foo.de/bar/xyz.jpg
-# would be saved in './www.foo.de/bar/xyz.jpg'.
+# It saves each of them in a directory (according to the server's structure the images was on) below the directory this script is run in,
+# e.g., 'http://www.foo.de/bar/xyz.jpg' would be saved in './www.foo.de/bar/xyz.jpg'.
 # TODO For large lists of files, it would be useful to show progress, e.g., 'Image 1 out of xxxx...'
 # @param inputfile A file containing a list of URLs, one in each line.
 # @param reload_all True = Reload all images, even if they already exist (Default: False).
