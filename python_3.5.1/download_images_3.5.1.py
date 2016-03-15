@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import getopt #get command line parameters
-import urllib #for image downloading
+import urllib.request #downloading images
+import urllib.error #handling errors when downloading an image
 import os #operating system stuff, like path
-import sys #Unexpected errors
+import sys #For unexpected errors
 
 ## This downloads a list of images (given as a list of URLs in a file), saving each of them in a directory according to the server structure it was on below the directory this script is run in.
 # @param inputfile A file containing a list of URLs, one in each line.
